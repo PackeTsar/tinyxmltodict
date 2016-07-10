@@ -10,7 +10,7 @@
 
 ##### Skinny XML to Python dictionary converter which works in Python2 or Python3 and requires NO non-native libraries/modules #####
 ##### Works with simple XML element names and attributes. Some XML formats may not work properly #####
-##### Input argument "inputdata" (str) can be either a file path, or a string of XML data; the method detects which was used #####
+##### Input argument "inputdata" (str) can be either a file path, or a string of XML data; the method detects which is used #####
 ##### Output is a formatted python dictionary of the XML data #####
 
 import xml.etree.ElementTree # Built in module for parsing the XML elements
