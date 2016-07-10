@@ -22,9 +22,9 @@ Tinyxmltodict can be imported as a module (if that's how you want to do it), but
 
 
 #####Direct in Code
-\>>>`tinyxmltodict('/root/somefile.xml')` # Parsing Linux/Unix file directly
+\>>>`tinyxmltodict('/root/somefile.xml')` # Parsing Linux/Unix file
 
-\>>>`tinyxmltodict('C:\\Users\\Public\\Desktop\\somefile.xml')` # Parsing Windows file directly (Use double-slashes)
+\>>>`tinyxmltodict('C:\\Users\\Public\\Desktop\\somefile.xml')` # Parsing Windows file (Use double-slashes)
 
 \>>>`tinyxmltodict('''<food><veg>Arugula</veg><veg>Celery</veg><fru>Apple</fru></food>''')` # Parsing direct XML input
 
@@ -32,8 +32,8 @@ Tinyxmltodict can be imported as a module (if that's how you want to do it), but
 #####As a Module
 \>>>`import tinyxmltodict as txd` # Import the module
 
-\>>>`txd.tinyxmltodict('/root/somefile.xml')` # Parsing Linux/Unix file directly
+\>>>`txd.tinyxmltodict('/root/somefile.xml')` # Parsing Linux/Unix file
 
-\>>>`txd.tinyxmltodict('C:\\Users\\Public\\Desktop\\somefile.xml')` # Parsing Windows file directly (Use double-slashes)
+\>>>`txd.tinyxmltodict('C:\\Users\\Public\\Desktop\\somefile.xml')` # Parsing Windows file (Use double-slashes)
 
 \>>>`txd.tinyxmltodict('''<food><veg>Arugula</veg><veg>Celery</veg><fru>Apple</fru></food>''')` # Parsing direct XML input
