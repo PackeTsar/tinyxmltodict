@@ -67,29 +67,25 @@ def tinyxmltodict(inputdata):
 
 
 
-dictdata = {'loopback': {'units': {'entry': [{'ip': {'entry': {'name': '69.194.131.240/32'}}, 'adjust-tcp-mss': {'enable': 'no'}, 'name': 'loopback.22', 'interface-management-profile': 'PORTAL'}, {'ip': {'entry': {'name': '216.240.168.140/32'}}, 'name': 'loopback.23', 'interface-management-profile': 'PORTAL'}, {'ip': {'entry': {'name': '38.96.15.167/32'}}, 'name': 'loopback.24', 'interface-management-profile': 'PORTAL'}, {'ip': {'entry': {'name': '10.180.32.5/32'}}, 'name': 'loopback.25', 'interface-management-profile': 'PORTAL'}]}}}
+##################################### T I N Y   D I C T T O X M L #####################################
+#######################################################################################################
 
+##### Put some notes here #####
 
-
-dictdata = {'config': {'globalsettings': {'paths': {'logfile': '/etc/radiuid/radiuid.log', 'radiuslogpath': '/var/log/radius/radacct/'}, 'searchterms': {'ipaddressterm': 'Framed-IP-Address', 'usernameterm': 'User-Name', 'delineatorterm': 'Acct-Authentic'}, 'uidsettings': {'timeout': '70', 'userdomain': 'domain.com'}}, 'targets': {'target': [{'username': 'admin', 'password': 'admin', 'hostname': 'pan1.kernshosting.com', 'version': '7'}, {'username': 'admin', 'password': 'admin', 'hostname': '10.162.30.51', 'version': '7'}]}}}
-
-
-
+import xml.etree.ElementTree # Built in module for parsing the XML elements
 
 def tinydicttoxml_recurse(node, dictdata):
 	for element in dictdata:
 		if type(dictdata[element]) == type(""):
 			newnode = xml.etree.ElementTree.SubElement(node, element)
 			newnode.text = dictdata[element]
-		if type(dictdata[element]) == type({}):
+		elif type(dictdata[element]) == type({}):
 			newnode = xml.etree.ElementTree.SubElement(node, element)
 			xml.etree.ElementTree.SubElement(newnode, tinydicttoxml_recurse(newnode, dictdata[element]))
-
-
-
-
-
-
+		elif type(dictdata[element]) == type([]):
+			for entry in dictdata[element]:
+				newnode = xml.etree.ElementTree.SubElement(node, element)
+				xml.etree.ElementTree.SubElement(newnode, tinydicttoxml_recurse(newnode, entry))
 
 def tinydicttoxml(dictdata):
 	for key in dictdata:
@@ -97,6 +93,19 @@ def tinydicttoxml(dictdata):
 		tinydicttoxml_recurse(currentroot, dictdata[key])
 	return xml.etree.ElementTree.tostring(currentroot)
 
-
-
-
+########################################## USAGE AND EXAMPLES #########################################
+#
+############ Used natively in your code ############
+#>>> tinyxmltodict('/root/somefile.xml') # Parsing Linux/Unix file
+#>>> tinyxmltodict('C:\\Users\\Public\\Desktop\\somefile.xml') # Parsing Windows file (Use double-slashes)
+#>>> tinyxmltodict('''<food><veg>Arugula</veg><veg>Celery</veg><fru>Apple</fru></food>''') # Parsing direct XML input
+#
+#
+############ Used as a module ############
+#>>> import tinyxmltodict as txd # Import the module
+#>>> txd.tinyxmltodict('/root/somefile.xml') # Parsing Linux/Unix file
+#>>> txd.tinyxmltodict('C:\\Users\\Public\\Desktop\\somefile.xml') # Parsing Windows file (Use double-slashes)
+#>>> txd.tinyxmltodict('''<food><veg>Arugula</veg><veg>Celery</veg><fru>Apple</fru></food>''') # Parsing direct XML input
+#
+#######################################################################################################
+#######################################################################################################
