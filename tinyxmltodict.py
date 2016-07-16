@@ -87,17 +87,20 @@ def tinydicttoxml_recurse(node, dictdata):
 			xml.etree.ElementTree.SubElement(newnode, tinydicttoxml_recurse(newnode, dictdata[element]))
 		elif type(dictdata[element]) == type([]):
 			for entry in dictdata[element]:
-				newnode = xml.etree.ElementTree.SubElement(node, element)
-				xml.etree.ElementTree.SubElement(newnode, tinydicttoxml_recurse(newnode, entry))
+				if type(entry) == type({}):
+					newnode = xml.etree.ElementTree.SubElement(node, element)
+					xml.etree.ElementTree.SubElement(newnode, tinydicttoxml_recurse(newnode, entry))
+				elif type(entry) == type(""):
+					newnode = xml.etree.ElementTree.SubElement(node, element)
+					newnode.text = entry
 
 def tinydicttoxml(dictdata):
-	if type(dictdata) != type({}):
-		dictdata = {"xmlroot": dictdata}
+	if type(dictdata) != type({}) or len(dictdata.keys()) > 1:
+		dictdata = {"root": dictdata}
 	for key in dictdata:
 		currentroot = xml.etree.ElementTree.Element(key)
 		tinydicttoxml_recurse(currentroot, dictdata[key])
 	return xml.etree.ElementTree.tostring(currentroot)
-
 
 def formatxml_recurse(node):
 	global currentindent,formatroot
@@ -131,15 +134,22 @@ def formatxml(xmldata):
 ########################################## USAGE AND EXAMPLES #########################################
 #
 ############ Used natively in your code ############
+#>>> somedict = {'buy-stuff': {'bath': {'soap': ['shampoo', 'handsoap']}, 'bedroom': {'bed': 'sheets'}}} # Create a dict
+#>>> tinydicttoxml(somedict) # Convert above dict variable
+#>>> print(formatxml(tinydicttoxml(somedict))) # Convert and print above XML in a pretty format
 #
-#>>> tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}}) 
+#>>> tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}}) # Convert direct dict input
+#>>> print(formatxml(tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}}))) # Pretty print dict input
 #
 #
 ############ Used as a module ############
 #>>> import tinyxmltodict as txd # Import the module
-#>>> txd.tinyxmltodict('/root/somefile.xml') # Parsing Linux/Unix file
-#>>> txd.tinyxmltodict('C:\\Users\\Public\\Desktop\\somefile.xml') # Parsing Windows file (Use double-slashes)
-#>>> txd.tinyxmltodict('''<food><veg>Arugula</veg><veg>Celery</veg><fru>Apple</fru></food>''') # Parsing direct XML input
+#>>> somedict = {'buy-stuff': {'bath': {'soap': ['shampoo', 'handsoap']}, 'bedroom': {'bed': 'sheets'}}} # Create a dict
+#>>> txd.tinydicttoxml(somedict) # Convert above dict variable
+#>>> print(txd.formatxml(txd.tinydicttoxml(somedict))) # Convert and print above XML in a pretty format
+#
+#>>> txd.tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}}) # Convert direct dict input
+#>>> print(txd.formatxml(txd.tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}})))
 #
 #
 #
