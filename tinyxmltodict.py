@@ -78,29 +78,28 @@ def tinyxmltodict(inputdata):
 import xml.etree.ElementTree # Built in module for parsing the XML elements
 
 def tinydicttoxml_recurse(node, dictdata):
-	for element in dictdata:
-		if type(dictdata[element]) == type(""):
-			newnode = xml.etree.ElementTree.SubElement(node, element)
-			newnode.text = dictdata[element]
-		elif type(dictdata[element]) == type({}):
-			newnode = xml.etree.ElementTree.SubElement(node, element)
-			xml.etree.ElementTree.SubElement(newnode, tinydicttoxml_recurse(newnode, dictdata[element]))
-		elif type(dictdata[element]) == type([]):
-			for entry in dictdata[element]:
-				if type(entry) == type({}):
-					newnode = xml.etree.ElementTree.SubElement(node, element)
-					xml.etree.ElementTree.SubElement(newnode, tinydicttoxml_recurse(newnode, entry))
-				elif type(entry) == type(""):
-					newnode = xml.etree.ElementTree.SubElement(node, element)
-					newnode.text = entry
+	for element in dictdata: # For each element in the input dictionary
+		if type(dictdata[element]) == type(""): # If this value is a string
+			newnode = xml.etree.ElementTree.SubElement(node, element) # Create a new XML subelement named by the input dict key
+			newnode.text = dictdata[element] # And set the text of the element as the string value
+		elif type(dictdata[element]) == type({}): # If this value is a dictionary
+			newnode = xml.etree.ElementTree.SubElement(node, element) # Create a new XML subelement named by the dict key
+			xml.etree.ElementTree.SubElement(newnode, tinydicttoxml_recurse(newnode, dictdata[element])) # And re-run the method with dict value as input
+		elif type(dictdata[element]) == type([]): # If this value is a list
+			for entry in dictdata[element]: # For each entry in the list
+				if type(entry) == type({}): # If the list entry is a dict
+					newnode = xml.etree.ElementTree.SubElement(node, element) # Create a new XML subelement named by the dict key
+					xml.etree.ElementTree.SubElement(newnode, tinydicttoxml_recurse(newnode, entry)) # And re-run the method with list entry as input
+				elif type(entry) == type(""):# If the list entry is a string
+					newnode = xml.etree.ElementTree.SubElement(node, element) # Create a new XML subelement named by the input dict key
+					newnode.text = entry # And set the element text as the string entry
 
 def tinydicttoxml(dictdata):
-	if type(dictdata) != type({}) or len(dictdata.keys()) > 1:
-		dictdata = {"root": dictdata}
-	for key in dictdata:
-		currentroot = xml.etree.ElementTree.Element(key)
-		tinydicttoxml_recurse(currentroot, dictdata[key])
-	return xml.etree.ElementTree.tostring(currentroot)
+	if type(dictdata) != type({}) or len(dictdata.keys()) > 1: # If the input is not a dict or has multiple keys
+		dictdata = {"root": dictdata} # Nest it in a new dictionary with one key named 'root'
+	xmlroot = xml.etree.ElementTree.Element(dictdata.keys()[0]) # Create the root element using the dict key as the tag
+	tinydicttoxml_recurse(xmlroot, dictdata[dictdata.keys()[0]]) # Run the recursive method to iterate the dictionary
+	return xml.etree.ElementTree.tostring(xmlroot) # Then return a string output of the assembled XML object
 
 def formatxml_recurse(node):
 	global currentindent,formatroot
