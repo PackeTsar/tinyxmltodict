@@ -70,7 +70,10 @@ def tinyxmltodict(inputdata):
 ##################################### T I N Y   D I C T T O X M L #####################################
 #######################################################################################################
 
-##### Put some notes here #####
+##### Skinny Python dictionary to XML converter which works in Python2 or Python3 and requires NO non-native libraries/modules #####
+##### Works with nested dictionaries, lists, and strings. Other data types may not work properly #####
+##### Input argument "dictdata" (dict) should be a dictionary containing lists, dictionaries, and strings as the values #####
+##### Output is an unformatted string of XML. The 'formatxml' method can be used to format the XML and make it pretty to print #####
 
 import xml.etree.ElementTree # Built in module for parsing the XML elements
 
@@ -88,24 +91,56 @@ def tinydicttoxml_recurse(node, dictdata):
 				xml.etree.ElementTree.SubElement(newnode, tinydicttoxml_recurse(newnode, entry))
 
 def tinydicttoxml(dictdata):
+	if type(dictdata) != type({}):
+		dictdata = {"xmlroot": dictdata}
 	for key in dictdata:
 		currentroot = xml.etree.ElementTree.Element(key)
 		tinydicttoxml_recurse(currentroot, dictdata[key])
 	return xml.etree.ElementTree.tostring(currentroot)
 
-def formatxml(xmldata):
-	#####Set XML formatting info #####
-	indenttext = "\t"
-	##################################
-	currentindent = 0
-	root = xml.etree.ElementTree.fromstring(xmldata)
-	for child in root.getchildren():
-		if child.text = None:
-			child.text = currentindent * indenttext
+
+def formatxml_recurse(node):
+	global currentindent,formatroot
 	currentindent += 1
-	
+	nodenum = len(node.getchildren())
+	if nodenum != 0:
+		for child in node.getchildren():
+			if child.text == None:
+				child.text = "\n" + currentindent * indenttext
+			if nodenum == 1:
+				child.tail = "\n" + (currentindent - 2) * indenttext
+			else:
+				child.tail = "\n" + (currentindent - 1) * indenttext
+			nodenum -= 1
+			formatxml_recurse(child)
+	currentindent -= 1
+	return node
+
+def formatxml(xmldata):
+	global currentindent,indenttext
+	##### Set XML formatting info #####
+	indenttext = "\t"
+	###################################
+	currentindent = 1
+	root = xml.etree.ElementTree.fromstring(xmldata)
+	root.text = "\n" + indenttext
+	result = xml.etree.ElementTree.tostring(formatxml_recurse(root))
+	del currentindent,indenttext
+	return result.decode('UTF-8')
 
 ########################################## USAGE AND EXAMPLES #########################################
+#
+############ Used natively in your code ############
+#
+#>>> tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}}) 
+#
+#
+############ Used as a module ############
+#>>> import tinyxmltodict as txd # Import the module
+#>>> txd.tinyxmltodict('/root/somefile.xml') # Parsing Linux/Unix file
+#>>> txd.tinyxmltodict('C:\\Users\\Public\\Desktop\\somefile.xml') # Parsing Windows file (Use double-slashes)
+#>>> txd.tinyxmltodict('''<food><veg>Arugula</veg><veg>Celery</veg><fru>Apple</fru></food>''') # Parsing direct XML input
+#
 #
 #
 #######################################################################################################
