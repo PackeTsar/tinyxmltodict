@@ -4,7 +4,6 @@
 #####      http://blog.packetsar.com       #####
 #####    https://github.com/packetsar/     #####
 
-
 ##################################### T I N Y   X M L T O D I C T #####################################
 #######################################################################################################
 
@@ -63,10 +62,6 @@ def tinyxmltodict(inputdata):
 
 
 
-
-
-
-
 ##################################### T I N Y   D I C T T O X M L #####################################
 #######################################################################################################
 
@@ -102,33 +97,33 @@ def tinydicttoxml(dictdata):
 	return xml.etree.ElementTree.tostring(xmlroot) # Then return a string output of the assembled XML object
 
 def formatxml_recurse(node):
-	global currentindent,formatroot
-	currentindent += 1
-	nodenum = len(node.getchildren())
-	if nodenum != 0:
-		for child in node.getchildren():
-			if child.text == None:
-				child.text = "\n" + currentindent * indenttext
-			if nodenum == 1:
-				child.tail = "\n" + (currentindent - 2) * indenttext
-			else:
-				child.tail = "\n" + (currentindent - 1) * indenttext
-			nodenum -= 1
-			formatxml_recurse(child)
-	currentindent -= 1
+	global currentindent,formatroot # Set indent length and text as global variables 
+	currentindent += 1 # Add 1 to the indentation length
+	nodenum = len(node.getchildren()) # Count the number of child elements in the current node
+	if nodenum != 0: # If there are children
+		for child in node.getchildren(): # For each child in the current node
+			if child.text == None: # If the child element has no value data
+				child.text = "\n" + currentindent * indenttext # Set the indent for the next grandchild element
+			if nodenum == 1: # If this is the last child in the list of children
+				child.tail = "\n" + (currentindent - 2) * indenttext # Set a shortened indent for the end of the parent tag
+			else: # If this is not the last child in the list of children
+				child.tail = "\n" + (currentindent - 1) * indenttext # Set a slightly shortened indent for the next child
+			nodenum -= 1 # Subtract one from the number of children
+			formatxml_recurse(child) # Reiterate the method on each child element
+	currentindent -= 1 # Subtract one from the current indentation length
 	return node
 
 def formatxml(xmldata):
-	global currentindent,indenttext
+	global currentindent,indenttext # Set indent length and text as global variables
 	##### Set XML formatting info #####
-	indenttext = "\t"
+	indenttext = "\t" # Set the text to use for indenting here
 	###################################
-	currentindent = 1
-	root = xml.etree.ElementTree.fromstring(xmldata)
-	root.text = "\n" + indenttext
-	result = xml.etree.ElementTree.tostring(formatxml_recurse(root))
-	del currentindent,indenttext
-	return result.decode('UTF-8')
+	currentindent = 1 # Initialize indentation as 1
+	root = xml.etree.ElementTree.fromstring(xmldata) # Mount the XML data to an element tree as "root"
+	root.text = "\n" + indenttext # Set initial indent of first child element
+	result = xml.etree.ElementTree.tostring(formatxml_recurse(root)) # Set the result text by calling the recursive method
+	del currentindent,indenttext # Delete the temporary indent variables
+	return result.decode('UTF-8') # Return the formatted text decoded to UTF-8
 
 ########################################## USAGE AND EXAMPLES #########################################
 #
@@ -149,8 +144,6 @@ def formatxml(xmldata):
 #
 #>>> txd.tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}}) # Convert direct dict input
 #>>> print(txd.formatxml(txd.tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}})))
-#
-#
 #
 #######################################################################################################
 #######################################################################################################
