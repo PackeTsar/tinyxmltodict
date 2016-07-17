@@ -23,7 +23,7 @@ def tinyxmltodict_recurse(node):
 		if len(node.items()) > 0: # If attributes exist for the element
 			result.update(dict(node.items())) # Add the attributes to the result
 		for child in node: # For each child of this element node
-			if child.tag not in result.keys(): # If this child element does not have an existing key
+			if child.tag not in list(result): # If this child element does not have an existing key
 				result[child.tag] = tinyxmltodict_recurse(child) # Add the key and iterate again
 			else: # If this child element does have an existing key
 				if type(result[child.tag]) != type([]): # And it is not already a list
@@ -90,10 +90,10 @@ def tinydicttoxml_recurse(node, dictdata):
 					newnode.text = entry # And set the element text as the string entry
 
 def tinydicttoxml(dictdata):
-	if type(dictdata) != type({}) or len(dictdata.keys()) > 1: # If the input is not a dict or has multiple keys
+	if type(dictdata) != type({}) or len(list(dictdata)) > 1: # If the input is not a dict or has multiple keys
 		dictdata = {"root": dictdata} # Nest it in a new dictionary with one key named 'root'
-	xmlroot = xml.etree.ElementTree.Element(dictdata.keys()[0]) # Create the root element using the dict key as the tag
-	tinydicttoxml_recurse(xmlroot, dictdata[dictdata.keys()[0]]) # Run the recursive method to iterate the dictionary
+	xmlroot = xml.etree.ElementTree.Element(list(dictdata)[0]) # Create the root element using the dict key as the tag
+	tinydicttoxml_recurse(xmlroot, dictdata[list(dictdata)[0]]) # Run the recursive method to iterate the dictionary
 	return xml.etree.ElementTree.tostring(xmlroot) # Then return a string output of the assembled XML object
 
 def formatxml_recurse(node):
