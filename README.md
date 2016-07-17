@@ -1,6 +1,6 @@
-# tinyxmltodict
-A Skinny XML to Python dictionary (and back) converter which works in Python2 or Python3 and requires **NO** non-native libraries/modules
+# TinyXMLtoDict ![TinyXMLtoDict][logo]
 
+A Skinny XML to Python dictionary (and back) converter which works in Python2 or Python3 and requires **NO** non-native libraries/modules
 
 
 ###About
@@ -8,13 +8,12 @@ Tinyxmltodict (TXD) was built to do dictionary conversions to and from XML for s
 
 TXD works with simple XML element names and attributes. Some of the more complex XML formats may not work properly.
 
-##XML-to-Dict
+##XML-to-Dict Conversion
 
 ###Input, Output
 The only argument "inputdata" should be a string and can be either a file path, or a string of XML data; the method automatically detects which is used.
 
 The output is a formatted python dictionary of the XML data
-
 
 
 ###Usage and Examples
@@ -39,7 +38,7 @@ Tinyxmltodict (TXD) can be imported as a module (if that's how you want to do it
 \>>>`txd.tinyxmltodict('''<food><veg>Arugula</veg><veg>Celery</veg><fru>Apple</fru></food>''')` # Parsing direct XML input
 
 
-##Dict-to-XML
+##Dict-to-XML Conversion
 
 ###Input, Output
 
@@ -86,3 +85,5 @@ Tinydicttoxml, just like its counterpart, can be imported as a module (if that's
 If you use TXD and find a bug, please report it as an issue on GitHub.
 
 If you fork the repo and write a fix, submit a pull request so we can all benefit :)
+
+[logo]: http://www.packetsar.com/wp-content/uploads/tinyxmltodict-tiny.png
