@@ -67,8 +67,8 @@ def tinyxmltodict(inputdata):
 
 ##### Skinny Python dictionary to XML converter which works in Python2 or Python3 and requires NO non-native libraries/modules #####
 ##### Works with nested dictionaries, lists, and strings. Other data types may not work properly #####
-##### Input argument "dictdata" (dict) should be a dictionary containing lists, dictionaries, and strings as the values #####
-##### Output is an unformatted string of XML. The 'formatxml' method can be used to format the XML and make it pretty to print #####
+##### Input argument "dictdata" (dict) should be a dictionary (with one key) containing lists, dictionaries, and strings as the values #####
+##### Output is an unformatted string of XML. The 'formatxml' method can be used to format the XML and make it pretty to print and read #####
 
 import xml.etree.ElementTree # Built in module for parsing the XML elements
 
@@ -94,7 +94,7 @@ def tinydicttoxml(dictdata):
 		dictdata = {"root": dictdata} # Nest it in a new dictionary with one key named 'root'
 	xmlroot = xml.etree.ElementTree.Element(list(dictdata)[0]) # Create the root element using the dict key as the tag
 	tinydicttoxml_recurse(xmlroot, dictdata[list(dictdata)[0]]) # Run the recursive method to iterate the dictionary
-	return xml.etree.ElementTree.tostring(xmlroot) # Then return a string output of the assembled XML object
+	return xml.etree.ElementTree.tostring(xmlroot).decode('UTF-8') # Then return a string output of the assembled XML object
 
 def formatxml_recurse(node):
 	global currentindent,formatroot # Set indent length and text as global variables 
@@ -143,7 +143,7 @@ def formatxml(xmldata):
 #>>> print(txd.formatxml(txd.tinydicttoxml(somedict))) # Convert and print above XML in a pretty format
 #
 #>>> txd.tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}}) # Convert direct dict input
-#>>> print(txd.formatxml(txd.tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}})))
+#>>> print(txd.formatxml(txd.tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}}))) # Convert and format direct input
 #
 #######################################################################################################
 #######################################################################################################
