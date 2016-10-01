@@ -8,7 +8,7 @@
 #######################################################################################################
 
 ##### Skinny XML to Python dictionary converter which works in Python2 or Python3 and requires NO non-native libraries/modules #####
-##### Works with simple XML element names and attributes. Some XML formats may not work properly #####
+##### Works with simple XML elements and attributes. XML attributes are preserved by nesting them in another dictionary #####
 ##### Input argument "inputdata" (str) can be either a file path, or a string of XML data; the method detects which is used #####
 ##### Output is a formatted python dictionary of the XML data #####
 
@@ -16,12 +16,14 @@ import xml.etree.ElementTree # Built in module for parsing the XML elements
 
 ##### Self-recursive method for XML conversion #####
 def tinyxmltodict_recurse(node):
+	attributekey = "attributes" # Set the dictionary key name which will store XML attributes
 	if len(node.getchildren()) == 0 and len(node.items()) == 0: # If there are no more child elements, and no element attributes
 		result = node.text # Set the element text as the result and return it
 	else: # If there are children and/or attributes
 		result = {} # Start with empty dict
 		if len(node.items()) > 0: # If attributes exist for the element
-			result.update(dict(node.items())) # Add the attributes to the result
+			result.update({attributekey: {}}) # Create a nested dictionary which will store the attribute(s)
+			result[attributekey].update(dict(node.items())) # Add the attributes to attribute dictionary
 		for child in node: # For each child of this element node
 			if child.tag not in list(result): # If this child element does not have an existing key
 				result[child.tag] = tinyxmltodict_recurse(child) # Add the key and iterate again
@@ -48,14 +50,14 @@ def tinyxmltodict(inputdata):
 ############ Used natively in your code ############
 #>>> tinyxmltodict('/root/somefile.xml') # Parsing Linux/Unix file
 #>>> tinyxmltodict('C:\\Users\\Public\\Desktop\\somefile.xml') # Parsing Windows file (Use double-slashes)
-#>>> tinyxmltodict('''<food><veg>Arugula</veg><veg>Celery</veg><fru>Apple</fru></food>''') # Parsing direct XML input
+#>>> tinyxmltodict('''<food greens="yes"><veg>Arugula</veg><veg>Celery</veg><fru>Apple</fru></food>''') # Parsing direct XML input
 #
 #
 ############ Used as a module ############
 #>>> import tinyxmltodict as txd # Import the module
 #>>> txd.tinyxmltodict('/root/somefile.xml') # Parsing Linux/Unix file
 #>>> txd.tinyxmltodict('C:\\Users\\Public\\Desktop\\somefile.xml') # Parsing Windows file (Use double-slashes)
-#>>> txd.tinyxmltodict('''<food><veg>Arugula</veg><veg>Celery</veg><fru>Apple</fru></food>''') # Parsing direct XML input
+#>>> txd.tinyxmltodict('''<food greens="yes"><veg>Arugula</veg><veg>Celery</veg><fru>Apple</fru></food>''') # Parsing direct XML input
 #
 #######################################################################################################
 #######################################################################################################
@@ -73,8 +75,12 @@ def tinyxmltodict(inputdata):
 import xml.etree.ElementTree # Built in module for parsing the XML elements
 
 def tinydicttoxml_recurse(node, dictdata):
+	attributekey = "attributes" # Set the dictionary key name you used to store XML attributes
 	for element in dictdata: # For each element in the input dictionary
-		if type(dictdata[element]) == type(""): # If this value is a string
+		if element == attributekey: # If this dictionary key matches the key used to store XML element attributes
+			for attribute in dictdata[element]: # For each attribute in the dictionary
+				node.set(attribute, dictdata[element][attribute]) # Set the attribute for the element
+		elif type(dictdata[element]) == type(""): # If this value is a string
 			newnode = xml.etree.ElementTree.SubElement(node, element) # Create a new XML subelement named by the input dict key
 			newnode.text = dictdata[element] # And set the text of the element as the string value
 		elif type(dictdata[element]) == type({}): # If this value is a dictionary
@@ -132,8 +138,8 @@ def formatxml(xmldata):
 #>>> tinydicttoxml(somedict) # Convert above dict variable
 #>>> print(formatxml(tinydicttoxml(somedict))) # Convert and print above XML in a pretty format
 #
-#>>> tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}}) # Convert direct dict input
-#>>> print(formatxml(tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}}))) # Pretty print dict input
+#>>> tinydicttoxml({'food': {'attributes': {'greens': 'yes'}, 'fru': 'Apple', 'veg': ['Arugula', 'Celery']}}) # Convert direct dict input
+#>>> print(formatxml(tinydicttoxml({'food': {'attributes': {'greens': 'yes'}, 'fru': 'Apple', 'veg': ['Arugula', 'Celery']}}))) # Pretty print dict input
 #
 #
 ############ Used as a module ############
@@ -142,8 +148,8 @@ def formatxml(xmldata):
 #>>> txd.tinydicttoxml(somedict) # Convert above dict variable
 #>>> print(txd.formatxml(txd.tinydicttoxml(somedict))) # Convert and print above XML in a pretty format
 #
-#>>> txd.tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}}) # Convert direct dict input
-#>>> print(txd.formatxml(txd.tinydicttoxml({'food': {'veg': ['Arugula', 'Celery'], 'fru': 'Apple'}}))) # Convert and format direct input
+#>>> txd.tinydicttoxml({'food': {'attributes': {'greens': 'yes'}, 'fru': 'Apple', 'veg': ['Arugula', 'Celery']}}) # Convert direct dict input
+#>>> print(txd.formatxml(txd.tinydicttoxml({'food': {'attributes': {'greens': 'yes'}, 'fru': 'Apple', 'veg': ['Arugula', 'Celery']}}))) # Convert and format direct input
 #
 #######################################################################################################
 #######################################################################################################
