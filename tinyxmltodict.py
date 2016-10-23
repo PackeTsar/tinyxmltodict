@@ -17,7 +17,7 @@ import xml.etree.ElementTree # Built in module for parsing the XML elements
 ##### Self-recursive method for XML conversion #####
 def tinyxmltodict_recurse(node):
 	attributekey = "attributes" # Set the dictionary key name which will store XML attributes
-	if len(node.getchildren()) == 0 and len(node.items()) == 0: # If there are no more child elements, and no element attributes
+	if len(list(node)) == 0 and len(node.items()) == 0: # If there are no more child elements, and no element attributes
 		result = node.text # Set the element text as the result and return it
 	else: # If there are children and/or attributes
 		result = {} # Start with empty dict
@@ -105,9 +105,9 @@ def tinydicttoxml(dictdata):
 def formatxml_recurse(node):
 	global currentindent,formatroot # Set indent length and text as global variables 
 	currentindent += 1 # Add 1 to the indentation length
-	nodenum = len(node.getchildren()) # Count the number of child elements in the current node
+	nodenum = len(list(node)) # Count the number of child elements in the current node
 	if nodenum != 0: # If there are children
-		for child in node.getchildren(): # For each child in the current node
+		for child in list(node): # For each child in the current node
 			if child.text == None: # If the child element has no value data
 				child.text = "\n" + currentindent * indenttext # Set the indent for the next grandchild element
 			if nodenum == 1: # If this is the last child in the list of children
