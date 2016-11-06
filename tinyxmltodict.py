@@ -36,7 +36,7 @@ def tinyxmltodict_recurse(node):
 
 ##### Simple starter method for the XML to Dict conversion process #####
 def tinyxmltodict(inputdata):
-	if "<" not in inputdata: # If the 'less than' symbol is not in the inputdata, it is likely a file path (don't use "<" in your file names, damnit!)
+	if "<" not in str(inputdata): # If the 'less than' symbol is not in the inputdata, it is likely a file path (don't use "<" in your file names, damnit!)
 		with open(inputdata, 'r') as filetext: # Open file in read mode
 			xmldata = filetext.read() # Suck in text of file
 			filetext.close() # And close the file
