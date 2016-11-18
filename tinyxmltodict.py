@@ -80,6 +80,8 @@ def tinydicttoxml_recurse(node, dictdata):
 		if element == attributekey: # If this dictionary key matches the key used to store XML element attributes
 			for attribute in dictdata[element]: # For each attribute in the dictionary
 				node.set(attribute, dictdata[element][attribute]) # Set the attribute for the element
+		elif type(dictdata[element]) == type(None): # If this is an empty element
+			newnode = xml.etree.ElementTree.SubElement(node, element) # Create a new XML subelement named by the input dict key
 		elif type(dictdata[element]) == type(""): # If this value is a string
 			newnode = xml.etree.ElementTree.SubElement(node, element) # Create a new XML subelement named by the input dict key
 			newnode.text = dictdata[element] # And set the text of the element as the string value
@@ -108,7 +110,7 @@ def formatxml_recurse(node):
 	nodenum = len(list(node)) # Count the number of child elements in the current node
 	if nodenum != 0: # If there are children
 		for child in list(node): # For each child in the current node
-			if child.text == None: # If the child element has no value data
+			if child.text == None and len(list(child)) != 0: # If the child element has no value data and no grandchildren exist
 				child.text = "\n" + currentindent * indenttext # Set the indent for the next grandchild element
 			if nodenum == 1: # If this is the last child in the list of children
 				child.tail = "\n" + (currentindent - 2) * indenttext # Set a shortened indent for the end of the parent tag
