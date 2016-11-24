@@ -40,6 +40,8 @@ def tinyxmltodict(inputdata):
 		with open(inputdata, 'r') as filetext: # Open file in read mode
 			xmldata = filetext.read() # Suck in text of file
 			filetext.close() # And close the file
+	elif 'class' in str(type(inputdata)): # Or if the inputdata is an already mounted XML object
+		xmldata = xml.etree.ElementTree.tostring(inputdata) # Convert it to a string for mounting
 	else: # If "<" is in the inputdata, then you are likely inputting XML data as a string
 		xmldata = inputdata # So set the xmldata variable as your string input
 	root = xml.etree.ElementTree.fromstring(xmldata) # Mount the root element
