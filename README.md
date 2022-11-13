@@ -94,4 +94,4 @@ If you use TXD and find a bug, please report it as an issue on GitHub.
 
 If you fork the repo and write a fix, submit a pull request so we can all benefit :)
 
-[logo]: http://www.packetsar.com/wp-content/uploads/tinyxmltodict-tiny.png
+[logo]: /tinyxmltodict-tiny.png
